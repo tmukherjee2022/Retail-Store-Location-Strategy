@@ -112,12 +112,6 @@ nordstrom_site_selection/
 
 ## The Feature Engineering Challenge
 
-### Question for You:
-**If you had these 4 separate datasets, how would you combine them into ONE dataset where each row represents a potential store location?**
-
-<details>
-<summary>Hint: Think about distance calculations and aggregations...</summary>
-
 You'll need to:
 1. **Join demographics** by location (lat/long → zip code mapping)
 2. **Calculate competitor density**: "Count competitors within 5 miles"
@@ -133,21 +127,9 @@ This requires learning:
 ---
 
 ## Technical Concepts Explained
-
-### 1. Why Separate Files? (Database Normalization)
-
 **Technical Definition**: Storing data in its most logical, non-redundant form where each table represents a single entity type.
 
-**Simple Terms**: Imagine you run a library. Do you:
-- **Option A**: Write the author's bio inside every single book they wrote?
-- **Option B**: Have a separate "Authors" table you reference?
-
-Option B is normalization! It prevents:
-- **Redundancy**: Author bio stored 100 times if they wrote 100 books
-- **Update anomalies**: If author's bio changes, you'd need to update 100 records
-- **Data drift**: Different books might have different versions of the same bio
-
-**In our project**: Demographics change annually (Census), competitors change monthly (new openings), but our stores are static. Keeping them separate mirrors how data actually arrives!
+**In my project**: Demographics change annually (Census), competitors change monthly (new openings), but our stores are static. Keeping them separate mirrors how data actually arrives!
 
 ---
 
@@ -155,21 +137,9 @@ Option B is normalization! It prevents:
 
 **Technical Definition**: Formula to calculate great-circle distance between two points on a sphere (Earth) given latitude/longitude.
 
-**Simple Terms**: You can't use Pythagorean theorem (`sqrt(x² + y²)`) on a globe because Earth is curved!
-
-**Analogy**: Imagine trying to measure the distance between New York and London:
-- **Wrong way**: Draw a straight line through the Earth's core
-- **Right way**: Measure along the Earth's surface (what planes actually fly)
-
-Haversine does the "right way." Formula looks scary but Python has libraries (`geopy`) that do it for you!
-
-**When you'll use it**: Calculating "How many competitors are within 5 miles of this location?"
-
 ---
 
 ### 3. Feature Engineering vs. Data Cleaning
-
-**Question**: What's the difference?
 
 **Data Cleaning**: Fixing problems with existing data
 - Example: Converting `-63940` income to `63940` (fixing negative)
@@ -179,54 +149,8 @@ Haversine does the "right way." Formula looks scary but Python has libraries (`g
 - Example: Creating `competitor_density = count_within_5mi / area`
 - Example: Creating `affluence_score = median_income * pct_bachelors_degree`
 
-**Analogy**: 
-- **Cleaning**: Washing vegetables before cooking
-- **Engineering**: Chopping, seasoning, and combining ingredients to make the dish
-
-Both are necessary! Clean first, then engineer.
-
----
-
 ## Your Roadmap (Recommended Order)
 
-### Phase 1: Exploratory Data Analysis (EDA)
-```python
-# In a Jupyter notebook:
-1. Load each CSV
-2. Run df.info(), df.describe()
-3. Identify missing values (df.isnull().sum())
-4. Visualize distributions (histograms)
-5. Document every data quality issue
-```
-
-**Question**: Why do EDA before cleaning?  
-**Answer**: You need to SEE the problems to know how to fix them!
-
-### Phase 2: Data Cleaning Pipeline
-```python
-# Create src/data_cleaning.py:
-1. Handle missing values (imputation strategies)
-2. Fix data types (dates, numbers)
-3. Standardize formats (zip codes, store names)
-4. Remove duplicates
-5. Validate ranges (lat/long, percentages)
-6. Save cleaned data to data/processed/
-```
-
-**Key Principle**: Make it REPRODUCIBLE. Anyone should be able to run your script and get the same clean data.
-
-### Phase 3: Feature Engineering
-```python
-# Create src/feature_engineering.py:
-1. Calculate distances (Haversine)
-2. Create spatial aggregations
-   - competitors_within_5mi
-   - poi_foot_traffic_within_2mi
-3. Create derived features
-   - store_age
-   - revenue_per_sqft
-4. Join all datasets into final modeling dataset
-```
 
 ### Phase 4: Modeling
 ```python
@@ -245,67 +169,9 @@ Both are necessary! Clean first, then engineer.
 
 ---
 
-## Data Quality Issues Summary (Your Checklist)
-
-- [ ] Missing values in multiple columns
-- [ ] Negative values where impossible (income, visitors)
-- [ ] Inconsistent date formats (YYYY vs MM/DD/YYYY)
-- [ ] Inconsistent string formats (store names, POI types)
-- [ ] Duplicate entries (store IDs, zip codes)
-- [ ] Invalid coordinates (lat >90, long >180)
-- [ ] Percentage values >1.0 (should be 0-1 or 0-100?)
-- [ ] Mixed units (square feet vs square meters)
-- [ ] Multiple null representations ("N/A", "None", "", "null")
-
----
-
-## Success Metrics for Your Portfolio
-
-**Demonstrate these skills**:
-1. ✅ **Data Engineering**: Clean, reproducible pipeline
-2. ✅ **Geospatial Analysis**: Distance calculations, spatial joins
-3. ✅ **Feature Engineering**: Thoughtful variable creation
-4. ✅ **Modeling**: Model selection, evaluation, interpretation
-5. ✅ **Communication**: Clear visualizations, actionable insights
-
-**What makes a great portfolio project?**
-- Document your thinking (comments + markdown cells)
-- Show before/after (messy data → clean data)
-- Explain tradeoffs ("I chose to drop these 5 rows because...")
-- Connect to business value ("This feature improved accuracy by 8%")
-
----
-
-## Questions to Think About (For Your Learning)
-
-1. **Should you drop rows with missing values or impute them?** 
-   - Depends on % missing and if data is MCAR (Missing Completely At Random)
-
-2. **How do you choose the radius for "competitors within X miles"?**
-   - Try multiple (1mi, 3mi, 5mi) and see which predicts best!
-
-3. **Should you weight all competitors equally?**
-   - Maybe closer competitors matter more? Try `1/distance` weighting
-
-4. **How do you handle the fact that some metros have WAY more stores?**
-   - Stratified sampling or metro-level fixed effects in your model
-
-5. **What if a "bad" location is just poorly managed?**
-   - This is confounding! You might add management metrics as controls
-
-These are EXACTLY the kinds of questions interviewers love!
-
----
-
 ## Resources
 
 - **Geopy docs**: https://geopy.readthedocs.io/ (for Haversine)
 - **Pandas spatial join**: https://geopandas.org/
 - **Tableau public**: Free version for portfolio projects
 - **Model interpretation**: SHAP values for explaining predictions
-
----
-
-**Ready to start?** Open a Jupyter notebook and begin with EDA!
-
-**Next immediate step**: Run `jupyter notebook` in the `notebooks/` directory and create `01_exploratory_data_analysis.ipynb`
