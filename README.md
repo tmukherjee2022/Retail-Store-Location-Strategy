@@ -149,8 +149,6 @@ This requires learning:
 - Example: Creating `competitor_density = count_within_5mi / area`
 - Example: Creating `affluence_score = median_income * pct_bachelors_degree`
 
-## Your Roadmap (Recommended Order)
-
 
 ### Phase 4: Modeling
 ```python
